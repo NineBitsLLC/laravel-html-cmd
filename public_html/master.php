@@ -3,11 +3,18 @@ namespace NineBits\Studio;
 
 class Master {
 	const COMPOSER_URL = "https://getcomposer.org/composer.phar";
-	const COMPOSER_NAME = "composer.phar";	
+	const COMPOSER_NAME = "composer.phar";
+	const COMPOSER_COMMAND_LIST = [
+		"update",
+	];
 	const DIRECTORY_TEMPORARY_NAME = "tmp";
 	const LARAVEL_DEFAULT_PUBLIC = "public";
 	const LARAVEL_PUBLIC = "public_html";
 	const LARAVEL_ARTISAN_NAME = "artisan";
+	const LARAVEL_ARTISAN_COMMAND_LIST = [
+		'make:auth',
+		'migrate'
+	];
 	const COMMAND_CREATE_PROJECT = "php COMPOSER create-project laravel/laravel PROJECT_PATH";
 	const SECRET = "Secret";
 	
@@ -16,16 +23,11 @@ class Master {
 			if(isset($_GET['composer'])){
 				if($_GET['composer']=='create-project'){
 					static::CreateProject(static::LARAVEL_PUBLIC);
-				} else if(in_array($_GET['composer'],[
-				'update',
-				])){
+				} else if(in_array($_GET['composer'], static::COMPOSER_COMMAND_LIST)){
 					static::RunComposerCommand($_GET['composer']);
 				} else echo 'Command not found.';
 			} else if(isset($_GET['artisan'])){
-				if(in_array($_GET['artisan'],[
-				'make:auth',
-				'migrate'
-				])){
+				if(in_array($_GET['artisan'], static::LARAVEL_ARTISAN_COMMAND_LIST)){
 					static::RunArtisanCommand($_GET['artisan']);
 				} else echo 'Command not found.';
 			} else echo 'Please enter command, example: ?token=Secret&composer=create-project.';
