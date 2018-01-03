@@ -21,14 +21,14 @@ class Master {
 	public static function Init(){
 		if(isset($_GET['token']) && $_GET['token']==static::SECRET){
 			if(isset($_GET['composer'])){
-				if($_GET['composer']=='create-project'){
+				if($_GET['composer']=='create-project' && !isset($_GET['param'])){
 					static::CreateProject(static::LARAVEL_PUBLIC);
 				} else if(in_array($_GET['composer'], static::COMPOSER_COMMAND_LIST)){
-					static::RunComposerCommand($_GET['composer']);
+					static::RunComposerCommand($_GET['composer'] . (isset($_GET['param'])?' ' . $_GET['param']:''));
 				} else echo 'Command not found.';
 			} else if(isset($_GET['artisan'])){
 				if(in_array($_GET['artisan'], static::LARAVEL_ARTISAN_COMMAND_LIST)){
-					static::RunArtisanCommand($_GET['artisan']);
+					static::RunArtisanCommand($_GET['artisan'] . (isset($_GET['param'])?' ' . $_GET['param']:''));
 				} else echo 'Command not found.';
 			} else echo 'Please enter command, example: ?token=Secret&composer=create-project.';
 		} else echo 'Access denied.';
@@ -80,9 +80,12 @@ class Master {
 		rmdir($source);
 	}
 	public static function DownloadComposer(){
-		if(!file_exists(static::ComposerPath())){
+		if(!static::CheckComposer()){
 			static::DownloadFile(static::COMPOSER_URL, static::ComposerPath());
 		}
+	}
+	public static function CheckComposer(){
+		return file_exists(static::ComposerPath());
 	}
 	public static function CheckProject(){
 		return file_exists(static::ArtisanPath());
@@ -97,7 +100,7 @@ class Master {
 		chdir($current);
 	}
 	public static function RunComposerCommand($command){
-		if(!static::CheckProject()) static::CreateProject(static::LARAVEL_PUBLIC);
+		static::DownloadComposer();
 		$cmd = "php " . static::ComposerPath() . " " . $command;
 		echo $cmd."<br>\n";
 		$current = __DIR__;
