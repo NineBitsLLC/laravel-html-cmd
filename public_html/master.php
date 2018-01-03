@@ -12,14 +12,96 @@ class Master {
 	const LARAVEL_PUBLIC = "public_html";
 	const LARAVEL_ARTISAN_NAME = "artisan";
 	const LARAVEL_ARTISAN_COMMAND_LIST = [
-		'make:auth',
-		'migrate'
+                '-V',
+                'clear-compiled',
+                'down',
+                'env',
+                'help',
+                'inspire',
+                'list',
+                'migrate',
+                'optimize',
+                'preset',
+                'serve',
+                'tinker',
+                'up',
+                'app:name',
+                'auth:clear-resets',
+                'controller',
+                'cache:clear',
+                'cache:forget',
+                'cache:table',
+                'config:cache',
+                'config:clear',
+                'db:seed',
+                'event',
+                'event:generate',
+                'key',
+                'key:generate',
+                'make',
+                'make:auth',
+                'make:command',
+                'make:controller',
+                'make:event',
+                'make:exception',
+                'make:factory',
+                'make:job',
+                'make:listener',
+                'make:mail',
+                'make:middleware',
+                'make:migration',
+                'make:model',
+                'make:notification',
+                'make:policy',
+                'make:provider',
+                'make:request',
+                'make:resource',
+                'make:rule',
+                'make:seeder',
+                'make:test',
+                'model',
+                'migrate',
+                'migrate:fresh',
+                'migrate:install',
+                'migrate:refresh',
+                'migrate:reset',
+                'migrate:rollback',
+                'migrate:status',
+                'notifications',
+                'notifications:table',
+                'package',
+                'package:discover',
+                'queue',
+                'queue:failed',
+                'queue:failed-table',
+                'queue:flush',
+                'queue:forget',
+                'queue:listen',
+                'queue:restart',
+                'queue:retry',
+                'queue:table',
+                'queue:work',
+                'route',
+                'route:cache',
+                'route:clear',
+                'route:list',
+                'schedule',
+                'schedule:run',
+                'session',
+                'session:table',
+                'storage',
+                'storage:link',
+                'vendor',
+                'vendor:publish',
+                'view',
+                'view:clear',
 	];
 	const COMMAND_CREATE_PROJECT = "php COMPOSER create-project laravel/laravel PROJECT_PATH";
 	const SECRET = "Secret";
 	
 	public static function Init(){
-		if(isset($_GET['token']) && $_GET['token']==static::SECRET){
+		if(isset($_GET['token']) && $_GET['token']==static::SECRET){                    
+                        static::CheckDependency();
 			if(isset($_GET['composer'])){
 				if($_GET['composer']=='create-project' && !isset($_GET['param'])){
 					static::CreateProject(static::LARAVEL_PUBLIC);
@@ -62,7 +144,7 @@ class Master {
 		static::DownloadComposer();
 		$command = str_replace(['COMPOSER','PROJECT_PATH'],[static::ComposerPath(), " " . static::BasePath() . DIRECTORY_SEPARATOR . $tempName], static::COMMAND_CREATE_PROJECT);
 		echo $command."<br>\n";
-		shell_exec($command);
+		static::RunCommand($command);
 		static::MoveAll(static::BasePath() . DIRECTORY_SEPARATOR . $tempName, static::BasePath(), function($source, $destination, $file) use ($publicPath){
 			if($file == static::LARAVEL_DEFAULT_PUBLIC && $publicPath != $file) {
 				static::MoveAll($source . DIRECTORY_SEPARATOR . $file, static::BasePath() . DIRECTORY_SEPARATOR . $publicPath);
@@ -84,6 +166,12 @@ class Master {
 			static::DownloadFile(static::COMPOSER_URL, static::ComposerPath());
 		}
 	}
+	public static function CheckDependency(){
+		if (!version_compare(PHP_VERSION, '7.0.0','>=')) {
+			echo "PHP version must be >= 7.0.0. You PHP version ".PHP_VERSION;
+			exit();
+		} else return;
+	}
 	public static function CheckComposer(){
 		return file_exists(static::ComposerPath());
 	}
@@ -96,7 +184,7 @@ class Master {
 		echo $cmd."<br>\n";
 		$current = __DIR__;
 		chdir(static::BasePath());
-		echo shell_exec($cmd);
+		static::RunCommand($cmd);
 		chdir($current);
 	}
 	public static function RunComposerCommand($command){
@@ -105,9 +193,15 @@ class Master {
 		echo $cmd."<br>\n";
 		$current = __DIR__;
 		chdir(static::BasePath());
-		echo shell_exec($cmd);
+		static::RunCommand($cmd);
 		chdir($current);
 	}
+        public static function RunCommand($command){
+            ob_start();
+            passthru($command);
+            $content = nl2br(ob_get_clean());
+            echo $content;
+        }
 }
 
 Master::Init();
