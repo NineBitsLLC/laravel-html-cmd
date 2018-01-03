@@ -14,3 +14,8 @@ To extend the list of standart commands, edit:
 
 To create other commands, edit:
 * Master::Init() method.
+
+### SECURITY
+At this stage, the use of the master.php is not safe.
+
+Therefore, after the development is complete, delete it.
