@@ -139,14 +139,14 @@ class Master {
 		return (file_exists($path) && filesize($path) > 0);
 	}
 	public static function CreateProject($publicPath = null, $tempName = null){
-		if(is_null($publicPath)) $publicPath = static::LARAVEL_DEFAULT_PUBLIC;
+		if(is_null($publicPath)) $publicPath = static::LARAVEL_PUBLIC;
 		if(is_null($tempName)) $tempName = static::DIRECTORY_TEMPORARY_NAME;
 		static::DownloadComposer();
 		$command = str_replace(['COMPOSER','PROJECT_PATH'],[static::ComposerPath(), " " . static::BasePath() . DIRECTORY_SEPARATOR . $tempName], static::COMMAND_CREATE_PROJECT);
 		echo $command."<br>\n";
 		static::RunCommand($command);
 		static::MoveAll(static::BasePath() . DIRECTORY_SEPARATOR . $tempName, static::BasePath(), function($source, $destination, $file) use ($publicPath){
-			if($file == static::LARAVEL_DEFAULT_PUBLIC && $publicPath != $file) {
+			if($file == static::LARAVEL_DEFAULT_PUBLIC) {
 				static::MoveAll($source . DIRECTORY_SEPARATOR . $file, static::BasePath() . DIRECTORY_SEPARATOR . $publicPath);
 			} else rename($source . DIRECTORY_SEPARATOR . $file, $destination . DIRECTORY_SEPARATOR . $file);
 		});
