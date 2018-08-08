@@ -3,7 +3,7 @@ Create laravel project without install composer and laravel-installer and use ar
 
 ### USAGE
 To use:
-* Place the master.pxp file in a folder accessible via HTTP.
+* Place the studio.pxp file in a folder accessible via HTTP.
 * Ask your secret key to the const SECRET
 * Set the public folder to const LARAVEL_PUPLIC
 
@@ -12,10 +12,10 @@ To extend the list of standart commands, edit:
 * const COMPOSER_COMMAND_LIST,
 * const LARAVEL_ARTISAN_COMMAND_LIST.
 
-To create other commands, edit:
-* Master::Init() method.
+To create other commands, add metods to class:
+* \NineBits\Executor.
 
 ### SECURITY
-At this stage, the use of the master.php is not safe.
+To protect studio.pxp, which must be writable by the web client, configure .htaccess or the web server so that users can not view its source code.
 
-Therefore, after the development is complete, delete it.
+After the development is completed, delete all files of this project.
